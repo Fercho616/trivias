@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia - Dogma Central</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; }
+        .container { max-width: 600px; margin: 50px auto; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        .question { font-size: 1.2em; margin-bottom: 20px; }
+        .option { display: block; margin: 10px auto; padding: 10px; border: none; width: 100%; cursor: pointer; border-radius: 5px; transition: background 0.3s; }
+        .correct { background: green !important; color: white; }
+        .incorrect { background: red !important; color: white; }
+        .next-btn { margin-top: 20px; padding: 10px 20px; background: blue; color: white; border: none; cursor: pointer; border-radius: 5px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container animate__animated animate__fadeIn">
+        <h2>Trivia: Dogma Central de la Biología Molecular</h2>
+        <div id="quiz"></div>
+        <button id="next" class="next-btn" onclick="nextQuestion()">Siguiente</button>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "¿Qué proceso convierte el ADN en ARN?", options: ["Transcripción", "Traducción", "Replicación", "Mutación"], answer: 0 },
+            { question: "¿Qué molécula transporta aminoácidos al ribosoma?", options: ["ARNm", "ARNt", "ARNr", "ADN"], answer: 1 },
+            { question: "¿Dónde ocurre la transcripción en una célula eucariota?", options: ["Citoplasma", "Núcleo", "Ribosomas", "Mitocondria"], answer: 1 },
+            { question: "¿Cuál es la unidad básica de la proteína?", options: ["Nucleótidos", "Aminoácidos", "Azúcares", "Lípidos"], answer: 1 },
+            { question: "¿Cuál es la función del ARN polimerasa?", options: ["Sintetizar ARN", "Degradar proteínas", "Ensamblar ribosomas", "Transportar aminoácidos"], answer: 0 },
+            { question: "¿Qué proceso convierte el ARN en proteína?", options: ["Replicación", "Transcripción", "Traducción", "Mutación"], answer: 2 },
+            { question: "¿Cuál de estas bases nitrogenadas es exclusiva del ARN?", options: ["Timina", "Uracilo", "Adenina", "Citosina"], answer: 1 },
+            { question: "¿Qué estructura celular es responsable de la traducción?", options: ["Ribosoma", "Núcleo", "Mitocondria", "Aparato de Golgi"], answer: 0 },
+            { question: "¿Cuál es el producto final de la transcripción?", options: ["Proteína", "ADN", "ARN", "Ácidos Grasos"], answer: 2 },
+            { question: "¿Qué molécula contiene la información genética hereditaria?", options: ["ARN", "ADN", "Proteínas", "Lípidos"], answer: 1 }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const quizDiv = document.getElementById('quiz');
+            quizDiv.innerHTML = '';
+            const q = questions[currentQuestion];
+            quizDiv.innerHTML = `<div class='question'>${q.question}</div>`;
+            q.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.textContent = option;
+                btn.className = 'option';
+                btn.onclick = () => selectAnswer(index, q.answer, btn);
+                quizDiv.appendChild(btn);
+            });
+            document.getElementById('next').style.display = 'none';
+        }
+
+        function selectAnswer(selected, correct, btn) {
+            document.querySelectorAll('.option').forEach(button => button.disabled = true);
+            if (selected === correct) {
+                btn.classList.add('correct');
+                score++;
+            } else {
+                btn.classList.add('incorrect');
+                document.querySelectorAll('.option')[correct].classList.add('correct');
+            }
+            document.getElementById('next').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const quizDiv = document.getElementById('quiz');
+            quizDiv.innerHTML = `<h3>Puntaje final: ${score} / ${questions.length}</h3>`;
+            let feedback;
+            if (score === 10) feedback = "¡Excelente! Dominio total del tema.";
+            else if (score >= 7) feedback = "¡Muy bien! Tienes buen conocimiento.";
+            else if (score >= 4) feedback = "Bien, pero hay áreas por mejorar.";
+            else feedback = "Sigue estudiando, puedes mejorar.";
+            quizDiv.innerHTML += `<p>${feedback}</p>`;
+            document.getElementById('next').style.display = 'none';
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
